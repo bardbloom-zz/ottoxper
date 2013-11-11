@@ -37,7 +37,6 @@ type BeastMaster interface {
 type Deed struct {
 	Name string
 	Js   Javascript
-	Fun  func(*Shrew)
 }
 
 func randomDeed(deeds []Deed) Deed {
@@ -46,11 +45,7 @@ func randomDeed(deeds []Deed) Deed {
 }
 
 var Deedles []Deed = []Deed{
-	Deed{"chirp", "chirp(\"%v\",%v)", chirp},
-}
-
-func chirp(shrew *Shrew) {
-	fmt.Printf("Ӝχ0う– %v goes ‘%v’\n", shrew, "chirp")
+	Deed{"chirp", "chirp(\"%v\",%v)"},
 }
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -121,10 +116,16 @@ func (shrew *Shrew) Run() {
 	util.DoThis("≈≈≈ Plz do the initial deeds via javascript!")
 	for i := 0; i < shrew.NDeedsToDo; i++ {
 		deed := randomDeed(shrew.Deeds)
-		fmt.Printf("ӜΔ7に– %v doing %v\n", shrew, deed.Name)
+		fmt.Printf("ӜΔ7に– %v doing deed named “%v” with javascript “%v”\n", shrew, deed.Name, deed.Js)
 		specificJsCall := Javascript(fmt.Sprintf(string(deed.Js), shrew, i))
 		shrew.BeastMaster().BeastAboutToDo(shrew, specificJsCall)
-		deed.Fun(shrew)
+		s := fmt.Sprintf(string(deed.Js), shrew.Name, i)
+		result, err := shrew.Otto().Run(s)
+		if err != nil {
+			fmt.Printf("Ӝλ5ぱ– –  err=%v\n", err)
+		}
+		util.Ignore(result)
+
 		time.Sleep(time.Second)
 	}
 	for {
@@ -171,7 +172,6 @@ func NewWombat() *Wombat {
 }
 
 func (wombat *Wombat) BeastAboutToDo(beast Beast, js Javascript) {
-	fmt.Printf("Ӝη8ヂ– I, Wombat, am no longer ignoring–  beast=%v, js=%v\n", beast, js)
 	updater := func(there bool, key, oldValue interface{}) (shouldUpdate bool, newValue interface{}) {
 		ev := Event{time.Now().Sub(wombat.StartTime), js}
 		if there {
