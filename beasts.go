@@ -9,6 +9,8 @@ import (
 	"time"
 )
 
+const NDeeds = 5
+
 var _ fmt.Stringer = nil
 var _ = util.Ignore()
 
@@ -20,7 +22,7 @@ type Beast interface {
 	DoAt(js Javascript, t time.Time) // Tell the beast to do something
 	Run()
 	Stop()
-	Otto() otto.Otto
+	Otto() *otto.Otto
 	BeastMaster() BeastMaster
 }
 
@@ -43,17 +45,36 @@ func randomDeed(deeds []Deed) Deed {
 	return deeds[k]
 }
 
+var Deedles []Deed = []Deed{
+	Deed{"chirp", "chirp()", chirp},
+}
+
+func chirp(shrew *Shrew) {
+	fmt.Printf("Ӝχ0う– %v goes ‘%v’\n", shrew, "chirp")
+}
+
 ////////////////////////////////////////////////////////////////////////////////
 
 type Shrew struct {
 	Name         string
-	OttoInterp   otto.Otto
+	OttoInterp   *otto.Otto
 	NDeedsToDo   int
 	BeastMaster1 BeastMaster
 	Deeds        []Deed
 }
 
-func (shrew *Shrew) Otto() otto.Otto {
+func NewShrew(name string, bm BeastMaster) *Shrew {
+	ottow := otto.New()
+	return &Shrew{
+		Name:         name,
+		OttoInterp:   ottow,
+		NDeedsToDo:   NDeeds,
+		BeastMaster1: bm,
+		Deeds:        Deedles,
+	}
+}
+
+func (shrew *Shrew) Otto() *otto.Otto {
 	return shrew.OttoInterp
 }
 
@@ -75,6 +96,7 @@ func (shrew *Shrew) Run() {
 		fmt.Printf("ӜΔ7に– %v doing %v\n", shrew, deed.Name)
 		shrew.BeastMaster().BeastAboutToDo(deed.Js)
 		deed.Fun(shrew)
+		time.Sleep(time.Second)
 	}
 }
 
