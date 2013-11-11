@@ -2,12 +2,13 @@
 Otto is probably not thread-safe, so I'll want one Otto instance per animal in
 the Zoo.
 
-Let's have a SHREW and a TROUT being ruled by a CAMEL.
+Let's have  SHREWs ruled by a Wombat
 
 SHREW and TROUT are both Beast{} instances.
   DoAt(js string, t time.Time)
-  Perform(actionAsJs string, beastmaster BeastMaster, action func())
+  
   Run()  // both of them do stuff autonomously (and record it)
 
 
-BeastMaster{}, like CAMEL: 
+BeastMaster{}, like Wombat
+  BeastJustDid(js)
